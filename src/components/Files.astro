@@ -1,0 +1,175 @@
+---
+import { readdirSync, statSync, readFileSync, existsSync } from 'node:fs';
+import { join, parse } from 'node:path';
+
+// 文件元数据接口
+interface FileInfo {
+  name: string;
+  description: string;
+  size: string;
+  date: string;
+  url: string;
+}
+
+// 获取文件大小的辅助函数
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+}
+
+// 获取文件描述
+function getFileDescription(filePath: string): string {
+  const { dir, name } = parse(filePath);
+  const descriptionPath = join(dir, `${name}.txt`);
+  
+  if (existsSync(descriptionPath)) {
+    try {
+      return readFileSync(descriptionPath, 'utf-8').trim();
+    } catch (error) {
+      console.error(`Error reading description for ${name}:`, error);
+    }
+  }
+  return "Click to download. Contact me for more details."; // 默认描述
+}
+
+// 检查是否为隐藏文件
+function isHiddenFile(name: string): boolean {
+  return name.startsWith('.') || // Unix 隐藏文件
+         name === 'Thumbs.db' || // Windows 缩略图文件
+         name === 'desktop.ini' || // Windows 桌面设置文件
+         name === '.DS_Store' || // macOS 目录设置文件
+         name.endsWith('.txt'); // 描述文件
+}
+
+// 获取文件列表
+function getFiles(): FileInfo[] {
+  try {
+    const baseDir = join(process.cwd(), 'public', 'files');
+    const files = readdirSync(baseDir)
+      .filter(name => !isHiddenFile(name)) // 过滤隐藏文件
+      .map(name => {
+        const fullPath = join(baseDir, name);
+        const stats = statSync(fullPath);
+        
+        return {
+          name,
+          description: getFileDescription(fullPath),
+          size: formatFileSize(stats.size),
+          date: stats.mtime.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long'
+          }),
+          url: `/files/${name}`
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name)); // 按名称排序
+    
+    return files;
+  } catch (error) {
+    console.error('Error reading files:', error);
+    return [];
+  }
+}
+
+const files = getFiles();
+---
+
+<section id="files" class="py-20 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Files & Downloads</h2>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="p-6 border-b">
+        <p class="text-gray-600">
+          Here you can find and download various files related to my work, including my resume, research papers, and project files.
+        </p>
+      </div>
+      
+      {files.length > 0 ? (
+        <ul class="divide-y divide-gray-200">
+          {files.map((file) => (
+            <li class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                  <h3 class="text-lg font-semibold text-blue-600 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                    </svg>
+                    {file.name}
+                  </h3>
+                  <p class="text-gray-600 text-sm mt-1">{file.description}</p>
+                  <div class="flex items-center mt-2 text-sm text-gray-500">
+                    <span class="mr-4">Size: {file.size}</span>
+                    <span>Updated: {file.date}</span>
+                  </div>
+                </div>
+                <a 
+                  href={file.url}
+                  download
+                  class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
+                >
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download
+                </a>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="p-6 text-center text-gray-500">
+          No files available.
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 处理所有文件夹链接
+    const folderLinks = document.querySelectorAll('a[href*="?path="]');
+    
+    folderLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        
+        // 更新 URL 并滚动到文件部分
+        history.pushState(null, '', href);
+        document.getElementById('files')?.scrollIntoView({ behavior: 'smooth' });
+        
+        // 重新加载内容
+        window.location.reload();
+      });
+    });
+
+    // 处理面包屑"Files"链接
+    const filesLink = document.querySelector('a[href="#files"]');
+    if (filesLink) {
+      filesLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // 更新 URL 并滚动到文件部分
+        history.pushState(null, '', '#files');
+        document.getElementById('files')?.scrollIntoView({ behavior: 'smooth' });
+        
+        // 重新加载内容
+        window.location.reload();
+      });
+    }
+
+    // 如果有 hash，滚动到文件部分
+    if (window.location.hash === '#files') {
+      document.getElementById('files')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // 处理浏览器的前进/后退按钮
+  window.addEventListener('popstate', () => {
+    window.location.reload();
+  });
+</script> 

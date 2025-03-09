@@ -1,0 +1,176 @@
+---
+import { readdirSync, statSync, readFileSync, existsSync } from 'node:fs';
+import { join, parse } from 'node:path';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+interface FileInfo {
+  name: string;
+  description: string;
+  size: string;
+  date: string;
+  url: string;
+  isDirectory: boolean;
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+}
+
+function getFileDescription(filePath: string): string {
+  const { dir, name } = parse(filePath);
+  const descriptionPath = join(dir, `${name}.txt`);
+  
+  if (existsSync(descriptionPath)) {
+    try {
+      return readFileSync(descriptionPath, 'utf-8').trim();
+    } catch (error) {
+      console.error(`Error reading description for ${name}:`, error);
+    }
+  }
+  return "Click to download. Contact me for more details.";
+}
+
+function getEntries(path: string = ''): FileInfo[] {
+  try {
+    const baseDir = join(process.cwd(), 'public', 'files');
+    const currentDir = join(baseDir, path);
+    const entries = readdirSync(currentDir)
+      .filter(name => !name.endsWith('.txt'));
+    
+    return entries.map(name => {
+      const fullPath = join(currentDir, name);
+      const stats = statSync(fullPath);
+      const isDirectory = stats.isDirectory();
+      const relativePath = path ? join(path, name) : name;
+      
+      return {
+        name,
+        description: isDirectory ? `Folder containing ${name} files` : getFileDescription(fullPath),
+        size: isDirectory ? '-' : formatFileSize(stats.size),
+        date: stats.mtime.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long'
+        }),
+        url: isDirectory ? `/files/${relativePath}` : `/files/${relativePath}`,
+        isDirectory
+      };
+    }).sort((a, b) => {
+      if (a.isDirectory && !b.isDirectory) return -1;
+      if (!a.isDirectory && b.isDirectory) return 1;
+      return a.name.localeCompare(b.name);
+    });
+  } catch (error) {
+    console.error('Error reading entries:', error);
+    return [];
+  }
+}
+
+const entries = getEntries(currentPath);
+const breadcrumbs = [
+  { name: 'Files', path: '/files' },
+  ...currentPath.split('/').filter(Boolean).map((part, index, array) => ({
+    name: part,
+    path: `/files/${array.slice(0, index + 1).join('/')}`
+  }))
+];
+---
+
+<section class="py-20 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Files & Downloads</h2>
+    
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <!-- 面包屑导航 -->
+      <div class="p-4 border-b bg-gray-50">
+        <nav class="flex flex-wrap" aria-label="Breadcrumb">
+          <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            {breadcrumbs.map((crumb, index) => (
+              <li class="inline-flex items-center">
+                {index > 0 && (
+                  <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                  </svg>
+                )}
+                <a 
+                  href={crumb.path}
+                  class={`ml-1 text-sm font-medium ${
+                    index === breadcrumbs.length - 1 
+                      ? 'text-gray-500 cursor-default' 
+                      : 'text-blue-600 hover:text-blue-800'
+                  }`}
+                >
+                  {crumb.name}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </div>
+
+      <!-- 文件列表 -->
+      {entries.length > 0 ? (
+        <ul class="divide-y divide-gray-200">
+          {entries.map((entry) => (
+            <li class="p-6 hover:bg-gray-50 transition-colors">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                  <h3 class="text-lg font-semibold text-blue-600 flex items-center">
+                    {entry.isDirectory ? (
+                      <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                      </svg>
+                    ) : (
+                      <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
+                      </svg>
+                    )}
+                    {entry.name}
+                  </h3>
+                  <p class="text-gray-600 text-sm mt-1">{entry.description}</p>
+                  <div class="flex items-center mt-2 text-sm text-gray-500">
+                    <span class="mr-4">Size: {entry.size}</span>
+                    <span>Updated: {entry.date}</span>
+                  </div>
+                </div>
+                {entry.isDirectory ? (
+                  <a 
+                    href={entry.url}
+                    class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                    </svg>
+                    Open
+                  </a>
+                ) : (
+                  <a 
+                    href={entry.url}
+                    download
+                    class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download
+                  </a>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="p-6 text-center text-gray-500">
+          This folder is empty.
+        </div>
+      )}
+    </div>
+  </div>
+</section> 

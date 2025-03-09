@@ -1,12 +1,13 @@
 ---
 import '../styles/global.css';
+import PageLoader from '../components/PageLoader.astro';
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = "My personal website" } = Astro.props;
+const { title, description = "Peiyang Li's personal website showcasing research, portfolio, and achievements" } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -17,8 +18,14 @@ const { title, description = "My personal website" } = Astro.props;
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://twis06.github.io" />
   </head>
   <body class="bg-gray-50">
+    <PageLoader />
     <slot />
     <footer class="bg-white py-8 mt-12">
       <div class="max-w-6xl mx-auto px-4 text-center text-gray-500">

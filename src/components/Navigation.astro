@@ -2,31 +2,35 @@
 const navItems = [
   { href: "/", label: "Home" },
   { href: "#about", label: "About" },
-  { href: "#portfolio", label: "Portfolio" },
+  { href: "#education", label: "Education" },
   { href: "#research", label: "Research" },
+  { href: "#portfolio", label: "Portfolio" },
+  { href: "#awards", label: "Awards" },
+  { href: "#files", label: "Files" },
+  { href: "/gallery", label: "Gallery" },
   { href: "#contact", label: "Contact" },
 ];
 ---
 
-<header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
+<header class="fixed w-full top-0 z-40 bg-white/80 backdrop-blur-sm shadow-sm">
   <nav class="max-w-6xl mx-auto px-4">
     <div class="flex justify-between h-16">
       <a href="/" class="flex items-center font-bold text-xl text-gray-800">
         Peiyang Li
       </a>
       
-      <div class="hidden md:flex items-center space-x-8">
+      <div class="hidden md:flex items-center space-x-6">
         {navItems.map(({ href, label }) => (
           <a
             href={href}
-            class="text-gray-600 hover:text-gray-900 transition-colors"
+            class="text-gray-600 hover:text-gray-900 transition-colors text-sm nav-link"
           >
             {label}
           </a>
         ))}
       </div>
 
-      <button class="md:hidden p-2" aria-label="Menu">
+      <button id="open-menu" class="md:hidden p-2" aria-label="Menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -34,3 +38,33 @@ const navItems = [
     </div>
   </nav>
 </header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        
+        // 如果是首页链接或 gallery 链接，使用默认导航行为
+        if (href === '/' || href === '/gallery') {
+          return;
+        }
+        
+        // 对于其他链接（锚点链接），阻止默认行为并平滑滚动
+        e.preventDefault();
+        const targetId = href.replace('#', '');
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+          // 平滑滚动到目标位置
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+          
+          // 更新 URL，但不触发页面刷新
+          history.pushState(null, '', href);
+        }
+      });
+    });
+  });
+</script>

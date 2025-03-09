@@ -1,0 +1,23 @@
+<div id="page-loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+  <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('page-loader');
+    
+    // Hide loader when page is loaded
+    window.addEventListener('load', () => {
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 500);
+    });
+  });
+</script>
+
+<style>
+  #page-loader {
+    transition: opacity 0.5s ease-out;
+  }
+</style> 

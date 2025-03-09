@@ -1,0 +1,52 @@
+---
+const awards = [
+  {
+    category: "STEM & Academics",
+    items: [
+      "High School Mathematical Contest in Modeling (HIMCM): Outstanding (Top 1%)",
+      "American Mathematics Competitions (AMC) 10/12: Qualified for AIME",
+      "American Regions Mathematics League (ARML): Global Top 10",
+      "British Physics Olympiad (BPhO): Gold (Top 10%)",
+      "PhysicsBowl: Gold (Top 2%)",
+      "Princeton University Physics Competition (PUPC): Honorable Mention",
+      "UK Chemistry Olympiad (UKChO): Gold (Top 8%)",
+      "Canadian Chemistry Contest (CCC): Silver (Top 20%)",
+      "Shanghai Youth Science & Innovation Competition: Third Prize"
+    ]
+  },
+  {
+    category: "Creative & Media",
+    items: [
+      "Visual China Community Photography Contest: Honorable Mention",
+      "Original Barrier-Free Movie Creation Competition: Silver Award (Top 2%)",
+      "Best Student Film Creator (School): Ranked 1st out of 60 participants"
+    ]
+  },
+  {
+    category: "Other Achievements",
+    items: [
+      "Wing Speed Karting Cup (Regional): Second Place",
+      "Software Copyright (National): Developed an online classroom platform"
+    ]
+  }
+];
+---
+
+<section id="awards" class="py-20 bg-gray-50">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Awards & Achievements</h2>
+    
+    <div class="grid md:grid-cols-3 gap-8">
+      {awards.map((category) => (
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">{category.category}</h3>
+          <ul class="space-y-2 list-disc list-inside text-gray-700">
+            {category.items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section> 

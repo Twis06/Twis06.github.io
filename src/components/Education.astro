@@ -1,0 +1,67 @@
+---
+const education = [
+  {
+    school: "Shanghai Pinghe School",
+    period: "2023 – Present",
+    details: [
+      "IB Diploma Program Candidate (5 HLs)",
+      // "Expected Grades: 45/45"
+    ]
+  },
+  {
+    school: "Suzhou Foreign Language School",
+    period: "2021 – 2023",
+    details: [
+      "Half Scholarship"
+    ]
+  }
+];
+
+const testScores = [
+  { test: "ACT", score: "20" },
+  { test: "TOEFL", score: "180" },
+  { test: "SAT", score: "6666" },
+  { test: "GaoKao", score: "5090" }
+];
+---
+
+<section id="education" class="py-20">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Education</h2>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div>
+        <h3 class="text-xl font-bold mb-6 text-blue-600">Academic Background</h3>
+        <div class="space-y-8">
+          {education.map((item) => (
+            <div class="border-l-4 border-blue-500 pl-4">
+              <div class="flex justify-between items-start">
+                <h4 class="text-lg font-semibold">{item.school}</h4>
+                <span class="text-gray-500 text-sm">{item.period}</span>
+              </div>
+              <ul class="mt-2 space-y-1 text-gray-600">
+                {item.details.map((detail) => (
+                  <li>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div>
+        <h3 class="text-xl font-bold mb-6 text-blue-600">Standardized Test Scores</h3>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="grid grid-cols-2 gap-4">
+            {testScores.map((item) => (
+              <div class="text-center p-4 border border-gray-200 rounded-lg">
+                <h4 class="text-lg font-semibold mb-2">{item.test}</h4>
+                <p class="text-2xl font-bold text-blue-600">{item.score}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> 

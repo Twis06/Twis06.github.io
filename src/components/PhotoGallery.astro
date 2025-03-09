@@ -1,0 +1,106 @@
+---
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+
+// 获取图片列表
+function getImages(): string[] {
+  try {
+    const galleryDir = join(process.cwd(), 'public', 'gallery');
+    return readdirSync(galleryDir)
+      .filter(name => {
+        const lower = name.toLowerCase();
+        return lower.endsWith('.jpg') || 
+               lower.endsWith('.jpeg') || 
+               lower.endsWith('.png') || 
+               lower.endsWith('.webp');
+      })
+      .map(name => `/gallery/${name}`);
+  } catch (error) {
+    console.error('Error reading gallery:', error);
+    return [];
+  }
+}
+
+const images = getImages();
+---
+
+<div class="fixed inset-0 bg-black">
+  {images.map((src, index) => (
+    <div 
+      class="absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out gallery-slide"
+      data-index={index}
+    >
+      <img 
+        src={src} 
+        alt={`Slide ${index + 1}`}
+        class="w-full h-full object-contain"
+      />
+    </div>
+  ))}
+</div>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.gallery-slide');
+  const totalSlides = slides.length;
+  
+  function showSlide(index: number) {
+    // 隐藏所有幻灯片
+    slides.forEach(slide => {
+      slide.classList.remove('opacity-100');
+      slide.classList.add('opacity-0');
+    });
+    
+    // 显示当前幻灯片
+    const slide = slides[index];
+    if (slide) {
+      slide.classList.remove('opacity-0');
+      slide.classList.add('opacity-100');
+    }
+  }
+  
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    showSlide(currentSlide);
+  }
+  
+  // 初始显示第一张幻灯片
+  showSlide(0);
+  
+  // 每 5 秒切换一次
+  setInterval(nextSlide, 5000);
+  
+  // 添加键盘控制
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft') {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      showSlide(currentSlide);
+    } else if (e.key === 'Escape') {
+      window.location.href = '/';
+    }
+  });
+  
+  // 添加触摸控制
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  });
+  
+  document.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchEndX - touchStartX;
+    
+    if (Math.abs(diff) > 50) { // 最小滑动距离
+      if (diff > 0) {
+        // 向右滑动，显示上一张
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      } else {
+        // 向左滑动，显示下一张
+        currentSlide = (currentSlide + 1) % totalSlides;
+      }
+      showSlide(currentSlide);
+    }
+  });
+</script> 

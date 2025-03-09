@@ -1,0 +1,21 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import Navigation from '../../components/Navigation.astro';
+import FileList from '../../components/FileList.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { path: undefined } }, // 根目录
+    { params: { path: 'Research' } },
+    { params: { path: 'Projects' } },
+    // 可以根据需要添加更多路径
+  ];
+}
+
+const { path = '' } = Astro.params;
+---
+
+<MainLayout title={`Files - ${path || 'All'}`}>
+  <Navigation />
+  <FileList currentPath={path} />
+</MainLayout> 

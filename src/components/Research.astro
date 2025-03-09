@@ -1,0 +1,64 @@
+---
+const researchProjects = [
+  {
+    title: "Technology's Impact on Educational Inequalities",
+    category: "Independent Research",
+    description: "Developed an Educational Equality Index (EEI) with 21 factors. Applied OLS regression analysis, revealing technology's link to inequality."
+  },
+  {
+    title: "Modeling Soccer Ball Trajectory",
+    category: "Independent Research",
+    description: "Used Python, Magnus effect, and hydrodynamics to model ball movement. Achieved trajectory estimations within 40 cm error in windless conditions."
+  },
+  {
+    title: "Semantic Analysis of Metafiction in 'The Things They Carried'",
+    category: "Independent Research",
+    description: "Applied AI-based semantic analysis and sentiment analysis to explore metafiction elements in literature."
+  },
+  {
+    title: "Message Context & Response Patterns",
+    category: "Supervised Research",
+    description: "Conducted interviews (N = 12) and email experiments (N = 280). Found personality-based response patterns and improved email read rates."
+  },
+  {
+    title: "Configuration Design & Optimization of Aerial Robots",
+    category: "Supervised Research (FAST Lab, Zhejiang University)",
+    description: "Studied quadcopter configurations and improved endurance in downwind conditions."
+  },
+  {
+    title: "Synchronous vs. Asynchronous Communication",
+    category: "UC Santa Barbara Summer Research Academy",
+    description: "Explored communication effectiveness in virtual groups under different synchronicity conditions."
+  },
+  {
+    title: "Urban Heat Islands & Elderly Vulnerability",
+    category: "Summer Research",
+    description: "Measured PM2.5, noise, and temperature at 15 points. Developed a congestion index and linked heat risks to urban design."
+  },
+  {
+    title: "Mathematical Simulation of Dandelion Dispersal",
+    category: "Summer Research",
+    description: "Applied the Lévy Flight Model to simulate dispersal paths. Identified density factors using AHP and EWM."
+  }
+];
+---
+
+<section id="research" class="py-20">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Research Experience</h2>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      {researchProjects.map((project) => (
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <div class="mb-4">
+            <span class="inline-block px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">
+              {project.category}
+            </span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">{project.title}</h3>
+          <p class="text-gray-600">{project.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section> 
