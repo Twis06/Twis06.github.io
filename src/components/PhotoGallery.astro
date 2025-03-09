@@ -1,39 +1,40 @@
 ---
-import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
-
-// 获取图片列表
-function getImages(): string[] {
-  try {
-    const galleryDir = join(process.cwd(), 'public', 'gallery');
-    return readdirSync(galleryDir)
-      .filter(name => {
-        const lower = name.toLowerCase();
-        return lower.endsWith('.jpg') || 
-               lower.endsWith('.jpeg') || 
-               lower.endsWith('.png') || 
-               lower.endsWith('.webp');
-      })
-      .map(name => `/gallery/${name}`);
-  } catch (error) {
-    console.error('Error reading gallery:', error);
-    return [];
+// 直接定义图片列表，而不是从文件系统读取
+const images = [
+  {
+    src: "https://i.imgur.com/fJwGkA5.jpg",
+    alt: "Gallery Image 1"
+  },
+  {
+    src: "https://i.imgur.com/R2zl7CC.jpg",
+    alt: "Gallery Image 2"
+  },
+  {
+    src: "https://i.imgur.com/Rj7RQYS.jpg",
+    alt: "Gallery Image 3"
+  },
+  {
+    src: "https://i.imgur.com/7qM9JJr.jpg",
+    alt: "Gallery Image 4"
+  },
+  {
+    src: "https://i.imgur.com/XIKmx4M.jpg",
+    alt: "Gallery Image 5"
   }
-}
-
-const images = getImages();
+];
 ---
 
 <div class="fixed inset-0 bg-black">
-  {images.map((src, index) => (
+  {images.map((image, index) => (
     <div 
       class="absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out gallery-slide"
       data-index={index}
     >
       <img 
-        src={src} 
-        alt={`Slide ${index + 1}`}
+        src={image.src}
+        alt={image.alt}
         class="w-full h-full object-contain"
+        loading={index === 0 ? "eager" : "lazy"}
       />
     </div>
   ))}
