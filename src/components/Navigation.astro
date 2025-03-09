@@ -1,0 +1,36 @@
+---
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "#about", label: "About" },
+  { href: "#portfolio", label: "Portfolio" },
+  { href: "#research", label: "Research" },
+  { href: "#contact", label: "Contact" },
+];
+---
+
+<header class="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
+  <nav class="max-w-6xl mx-auto px-4">
+    <div class="flex justify-between h-16">
+      <a href="/" class="flex items-center font-bold text-xl text-gray-800">
+        Peiyang Li
+      </a>
+      
+      <div class="hidden md:flex items-center space-x-8">
+        {navItems.map(({ href, label }) => (
+          <a
+            href={href}
+            class="text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            {label}
+          </a>
+        ))}
+      </div>
+
+      <button class="md:hidden p-2" aria-label="Menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
