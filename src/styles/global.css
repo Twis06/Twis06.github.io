@@ -1,3 +1,96 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --apple-blue: #0071e3;
+  --apple-gray: #86868b;
+  --apple-black: #1d1d1f;
+  --apple-white: #f5f5f7;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-white text-[#1d1d1f] antialiased;
+    font-feature-settings: "ss01" on, "ss02" on, "cv01" on, "cv02" on;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .apple-button {
+    @apply px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300;
+  }
+
+  .apple-button-primary {
+    @apply bg-[#0071e3] text-white hover:bg-[#0077ED];
+  }
+
+  .apple-button-secondary {
+    @apply bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed];
+  }
+
+  .apple-section {
+    @apply py-20 md:py-32;
+  }
+
+  .apple-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .apple-heading {
+    @apply text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight;
+  }
+
+  .apple-subheading {
+    @apply text-xl md:text-2xl text-[#86868b] mt-4;
+  }
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Apple-style animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #86868b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}

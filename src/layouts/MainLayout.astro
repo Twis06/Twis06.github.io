@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import PageLoader from '../components/PageLoader.astro';
+import Navigation from '../components/Navigation.astro';
 
 interface Props {
   title: string;
@@ -23,13 +24,27 @@ const { title, description = "Peiyang Li's personal website showcasing research,
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://twis06.github.io" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-gray-50">
+  <body class="bg-white font-['SF_Pro_Display']">
     <PageLoader />
+    <Navigation />
     <slot />
-    <footer class="bg-white py-8 mt-12">
-      <div class="max-w-6xl mx-auto px-4 text-center text-gray-500">
-        <p>&copy; {new Date().getFullYear()} Peiyang Li. All rights reserved.</p>
+    <footer class="bg-[#f5f5f7] py-12 mt-12">
+      <div class="apple-container">
+        <div class="text-center space-y-4">
+          <p class="text-[#86868b]">&copy; {new Date().getFullYear()} Peiyang Li. All rights reserved.</p>
+          <div class="flex justify-center space-x-6">
+            <a href="https://github.com/twis06" target="_blank" rel="noopener noreferrer" class="text-[#86868b] hover:text-[#1d1d1f] transition-colors">
+              GitHub
+            </a>
+            <a href="https://linkedin.com/in/peiyang-li" target="_blank" rel="noopener noreferrer" class="text-[#86868b] hover:text-[#1d1d1f] transition-colors">
+              LinkedIn
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   </body>

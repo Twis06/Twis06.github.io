@@ -6,24 +6,24 @@ const navItems = [
   { href: "#research", label: "Research" },
   { href: "#portfolio", label: "Portfolio" },
   { href: "#awards", label: "Awards" },
-  { href: "#files", label: "Files" },
+  { href: "/blog", label: "Blog" },
   { href: "/gallery", label: "Gallery" },
   { href: "#contact", label: "Contact" },
 ];
 ---
 
-<header class="fixed w-full top-0 z-40 bg-white/80 backdrop-blur-sm shadow-sm">
+<header class="fixed w-full top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
   <nav class="max-w-6xl mx-auto px-4">
     <div class="flex justify-between h-16">
-      <a href="/" class="flex items-center font-bold text-xl text-gray-800">
+      <a href="/" class="flex items-center font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-teal-400">
         Peiyang Li
       </a>
       
-      <div class="hidden md:flex items-center space-x-6">
+      <div class="hidden md:flex items-center space-x-8">
         {navItems.map(({ href, label }) => (
           <a
             href={href}
-            class="text-gray-600 hover:text-gray-900 transition-colors text-sm nav-link"
+            class="text-gray-600 hover:text-gray-900 transition-all duration-300 text-sm nav-link relative after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-gradient-to-r after:from-blue-500 after:to-teal-400 after:left-0 after:-bottom-1 after:rounded-full after:opacity-0 after:transform after:scale-x-0 after:transition-all hover:after:opacity-100 hover:after:scale-x-100"
           >
             {label}
           </a>
@@ -46,22 +46,20 @@ const navItems = [
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
+        if (!href) return;
         
-        // 如果是首页链接或 gallery 链接，使用默认导航行为
-        if (href === '/' || href === '/gallery') {
+        // If it's a page link (not an anchor), let it navigate normally
+        if (href === '/' || href.startsWith('/')) {
           return;
         }
         
-        // 对于其他链接（锚点链接），阻止默认行为并平滑滚动
+        // For anchor links, handle smooth scrolling
         e.preventDefault();
         const targetId = href.replace('#', '');
         const targetElement = document.getElementById(targetId);
         
         if (targetElement) {
-          // 平滑滚动到目标位置
           targetElement.scrollIntoView({ behavior: 'smooth' });
-          
-          // 更新 URL，但不触发页面刷新
           history.pushState(null, '', href);
         }
       });

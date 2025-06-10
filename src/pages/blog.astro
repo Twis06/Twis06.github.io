@@ -1,0 +1,75 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Get all blog posts sorted by date
+const posts = await getCollection('blog');
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<MainLayout title="Blog | Peiyang Li">
+  <div class="pt-20 lg:pt-24">
+    <div class="apple-container">
+      <div class="text-center mb-16">
+        <h1 class="apple-heading mb-4">Blog</h1>
+        <p class="apple-subheading">Thoughts, research notes, and discoveries.</p>
+      </div>
+
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {sortedPosts.map((post) => (
+          <article class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
+            {post.data.coverImage && (
+              <div class="aspect-video overflow-hidden">
+                <img 
+                  src={post.data.coverImage} 
+                  alt={post.data.title}
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            )}
+            <div class="p-6">
+              <div class="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                <time datetime={post.data.pubDate.toISOString()}>
+                  {new Date(post.data.pubDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </time>
+                {post.data.category && (
+                  <span class="px-2 py-1 bg-gray-100 rounded-full text-xs">
+                    {post.data.category}
+                  </span>
+                )}
+              </div>
+              
+              <h2 class="text-xl font-semibold mb-3 text-gray-900 hover:text-blue-600 transition-colors">
+                <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+              </h2>
+              
+              <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                {post.data.description}
+              </p>
+
+              <a 
+                href={`/blog/${post.slug}`}
+                class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
+              >
+                Read More
+                <svg class="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {sortedPosts.length === 0 && (
+        <div class="text-center py-20">
+          <p class="text-gray-600">No blog posts yet. Check back soon!</p>
+        </div>
+      )}
+    </div>
+  </div>
+</MainLayout> 

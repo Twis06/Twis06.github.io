@@ -1,0 +1,43 @@
+<button
+  id="return-to-top"
+  class="fixed bottom-8 right-8 bg-white/90 backdrop-blur-md text-gray-600 p-3 rounded-full shadow-lg border border-gray-200 opacity-0 invisible transition-all duration-300 hover:bg-gray-50 hover:text-gray-900 focus:outline-none"
+  aria-label="Return to top"
+>
+  <svg
+    class="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M5 10l7-7m0 0l7 7m-7-7v18"
+    ></path>
+  </svg>
+</button>
+
+<script>
+  const button = document.getElementById('return-to-top');
+  
+  // Show button when scrolling down
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      button?.classList.remove('opacity-0', 'invisible');
+      button?.classList.add('opacity-100', 'visible');
+    } else {
+      button?.classList.add('opacity-0', 'invisible');
+      button?.classList.remove('opacity-100', 'visible');
+    }
+  });
+
+  // Smooth scroll to top
+  button?.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+</script> 
